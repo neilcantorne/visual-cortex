@@ -3,7 +3,7 @@ use std::alloc::{alloc, Layout};
 
 use crate::neu::TensorValue;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Tensor<const D: usize, T>
     where T: TensorValue + Copy + Sized {
     sizes: [u16; D],
@@ -29,6 +29,16 @@ impl <const D: usize, T> Tensor<D, T>
 
         Err(TensorError{ kind: TensorErrorKind::MemoryAllocationFailed })
     }
+
+    #[inline(always)]
+    unsafe fn fill_zeros(buffer: NonNull<T>, size: usize) {
+        for index in 0isize..(size as isize) {
+            buffer.as_ptr()
+            .offset(index)
+            .write(T::ZERO)
+        }
+    }
+    
 }
 
 impl<T> Tensor<1, T>
@@ -37,16 +47,42 @@ impl<T> Tensor<1, T>
     pub unsafe fn new(s1: u16) -> Result<Self, TensorError> {
         Self::new_internal(s1.into(), [s1])
     }
+
+    pub fn new_zeroed(s1: u16) -> Result<Self, TensorError> {
+        return unsafe {
+            let result = Self::new_internal(s1.into(), [s1]);
+
+            // fills the array with zero values
+            if let Ok(tensor) = result {
+                Self::fill_zeros(tensor.buffer, s1.into());
+            }
+
+            result
+        };
+    }
 }
 
 impl<T> Tensor<2, T>
     where T: TensorValue + Copy + Sized {
     
     pub unsafe fn new(s1: u16, s2: u16) -> Result<Self, TensorError> {
-        let count = s1 as usize
-        * s2 as usize;
+        let count = s1 as usize * s2 as usize;
 
         Self::new_internal(count, [s1, s2])
+    }
+
+    pub fn new_zeroed(s1: u16, s2: u16) -> Result<Self, TensorError> {
+        return unsafe {
+            let count = s1 as usize * s2 as usize;
+            let result = Self::new_internal(count, [s1, s2]);
+
+            // fills the array with zero values
+            if let Ok(tensor) = result {
+                Self::fill_zeros(tensor.buffer, count);
+            }
+
+            result
+        };
     }
 }
 
@@ -54,11 +90,23 @@ impl<T> Tensor<3, T>
     where T: TensorValue + Copy + Sized {
 
     pub unsafe fn new(s1: u16, s2: u16, s3: u16) -> Result<Self, TensorError> {
-        let count = s1 as usize
-        * s2 as usize
-        * s3 as usize;
+        let count = s1 as usize * s2 as usize * s3 as usize;
 
         Self::new_internal(count, [s1, s2, s3])
+    }
+
+    pub fn new_zeroed(s1: u16, s2: u16, s3: u16) -> Result<Self, TensorError> {
+        return unsafe {
+            let count =s1 as usize * s2 as usize * s3 as usize;
+            let result = Self::new_internal(count, [s1, s2, s3]);
+
+            // fills the array with zero values
+            if let Ok(tensor) = result {
+                Self::fill_zeros(tensor.buffer, count);
+            }
+
+            result
+        };
     }
 }
 
