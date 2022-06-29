@@ -3,14 +3,15 @@ use std::alloc::{alloc, Layout};
 
 use crate::neu::TensorValue;
 
+#[derive(Clone, Copy)]
 pub struct Tensor<const D: usize, T>
-    where T: TensorValue {
+    where T: TensorValue + Copy + Sized {
     sizes: [u16; D],
     buffer: NonNull<T>
 }
 
 impl<T> Tensor<1, T>
-    where T: TensorValue {
+    where T: TensorValue + Copy + Sized {
 
     pub unsafe fn new(s1: u16) -> Result<Self, TensorError> {
         let ptr = {
@@ -30,7 +31,7 @@ impl<T> Tensor<1, T>
 }
 
 impl<T> Tensor<2, T>
-    where T: TensorValue {
+    where T: TensorValue + Copy + Sized {
     
     pub unsafe fn new(s1: u16, s2: u16) -> Result<Self, TensorError> {
         let ptr = {
@@ -55,7 +56,7 @@ impl<T> Tensor<2, T>
 }
 
 impl<T> Tensor<3, T>
-    where T: TensorValue {
+    where T: TensorValue + Copy + Sized {
 
     pub unsafe fn new(s1: u16, s2: u16, s3: u16) -> Result<Self, TensorError> {
         let ptr = {
