@@ -110,6 +110,30 @@ impl<T> Tensor<3, T>
     }
 }
 
+impl<T> Tensor<4, T>
+    where T: TensorValue + Copy + Sized {
+
+    pub unsafe fn new(s1: u16, s2: u16, s3: u16, s4: u16) -> Result<Self, TensorError> {
+        let count =s1 as usize * s2 as usize * s3 as usize * s4 as usize;
+
+        Self::new_internal(count, [s1, s2, s3, s4])
+    }
+
+    pub fn new_zeroed(s1: u16, s2: u16, s3: u16, s4: u16) -> Result<Self, TensorError> {
+        return unsafe {
+            let count =s1 as usize * s2 as usize * s3 as usize * s4 as usize;
+            let result = Self::new_internal(count, [s1, s2, s3, s4]);
+
+            // fills the array with zero values
+            if let Ok(tensor) = result {
+                Self::fill_zeros(tensor.buffer, count);
+            }
+
+            result
+        };
+    }
+}
+
 #[derive(Debug)]
 pub struct TensorError {
     kind: TensorErrorKind
