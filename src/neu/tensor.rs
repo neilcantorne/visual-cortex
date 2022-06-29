@@ -80,3 +80,12 @@ impl<T> Tensor<3, T>
     }
 }
 
+#[derive(Debug)]
+pub struct TensorError {
+    kind: TensorErrorKind
+}
+
+#[derive(Debug)]
+enum TensorErrorKind {
+    MemoryAllocationFailed
+}
