@@ -10,23 +10,32 @@ pub struct Tensor<const D: usize, T>
     buffer: NonNull<T>
 }
 
-impl<T> Tensor<1, T>
+impl <const D: usize, T> Tensor<D, T> 
     where T: TensorValue + Copy + Sized {
-
-    pub unsafe fn new(s1: u16) -> Result<Self, TensorError> {
+    
+    #[inline(always)]
+    unsafe fn new_internal(count: usize, sizes: [u16; D]) -> Result<Self, TensorError> {
         let ptr = {
-            let layout = Layout::array::<T>(s1 as usize).unwrap();
+            let layout = Layout::array::<T>(count).unwrap();
             NonNull::new(alloc(layout) as *mut T)
         };
 
         if let Some(buffer) = ptr {
             return Ok(Self {
-                sizes: [s1],
+                sizes,
                 buffer
             });
         }
 
         Err(TensorError{ kind: TensorErrorKind::MemoryAllocationFailed })
+    }
+}
+
+impl<T> Tensor<1, T>
+    where T: TensorValue + Copy + Sized {
+
+    pub unsafe fn new(s1: u16) -> Result<Self, TensorError> {
+        Self::new_internal(s1.into(), [s1])
     }
 }
 
@@ -34,24 +43,10 @@ impl<T> Tensor<2, T>
     where T: TensorValue + Copy + Sized {
     
     pub unsafe fn new(s1: u16, s2: u16) -> Result<Self, TensorError> {
-        let ptr = {
-            let size = 
-            s1 as usize
-            * s2 as usize;
+        let count = s1 as usize
+        * s2 as usize;
 
-            let layout = Layout::array::<T>(size).unwrap();
-
-            NonNull::new(alloc(layout) as *mut T)
-        };
-
-        if let Some(buffer) = ptr {
-            return Ok(Self {
-                sizes: [s1, s2],
-                buffer
-            });
-        }
-
-        Err(TensorError{ kind: TensorErrorKind::MemoryAllocationFailed })
+        Self::new_internal(count, [s1, s2])
     }
 }
 
@@ -59,25 +54,11 @@ impl<T> Tensor<3, T>
     where T: TensorValue + Copy + Sized {
 
     pub unsafe fn new(s1: u16, s2: u16, s3: u16) -> Result<Self, TensorError> {
-        let ptr = {
-            let size = 
-                s1 as usize
-                * s2 as usize
-                * s3 as usize;
+        let count = s1 as usize
+        * s2 as usize
+        * s3 as usize;
 
-            let layout = Layout::array::<T>(size).unwrap();
-
-            NonNull::new(alloc(layout) as *mut T)
-        };
-
-        if let Some(buffer) = ptr {
-            return Ok(Self {
-                sizes: [s1, s2, s3],
-                buffer
-            });
-        }
-
-        Err(TensorError{ kind: TensorErrorKind::MemoryAllocationFailed })
+        Self::new_internal(count, [s1, s2, s3])
     }
 }
 
