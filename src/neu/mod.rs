@@ -1,5 +1,6 @@
 mod tensor;
 mod tensor_value;
+mod device;
 
 pub use tensor::Tensor;
 pub type Tensor1d<T> = Tensor<1, T>;
@@ -12,3 +13,4 @@ pub type Vec3f = (f32, f32, f32);
 pub type Vec4f = (f32, f32, f32, f32);
 
 pub use tensor_value::TensorValue;
+pub use device::Device;
