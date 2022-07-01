@@ -25,3 +25,12 @@ impl<const SIZE: usize, T> StackBuffer<SIZE, T>
     }
 }
 
+impl<const SIZE: usize> StackBuffer<SIZE, u8> {
+    pub fn get_string(&self, length: usize) -> String {
+        if let Ok(result) = String::from_utf8(self.buffer.into_iter().take(length).collect()) {
+            return result;
+        }
+
+        return String::new();
+    }
+}
