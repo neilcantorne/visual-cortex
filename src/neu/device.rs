@@ -1,3 +1,5 @@
+use std::ffi::c_void;
+
 use crate::utils::StackBuffer;
 
 
@@ -22,4 +24,16 @@ impl Device {
             Device{ device_id }
         }).collect()
     }
+
+    pub fn get_name(&self) -> String {
+        let mut buffer = StackBuffer::<256, u8>::new(0u8);
+        let mut length = 0usize;
+
+        unsafe {
+            cl::clGetDeviceInfo(self.device_id, cl::CL_DEVICE_NAME, buffer.get_count(), buffer.get_ptr() as *mut c_void, &mut length);
+        }
+
+        buffer.get_string(length)
+    }
+
 }
