@@ -1,11 +1,9 @@
-use std::borrow::BorrowMut;
-
 use crate::utils::StackBuffer;
 
 
 #[derive(Copy, Clone)]
 pub(crate) struct OpenCLDevice {
-    id: cl::cl_device_id
+    pub (super) id: cl::cl_device_id
 }
 
 impl super::device::DeviceInternal for OpenCLDevice {
