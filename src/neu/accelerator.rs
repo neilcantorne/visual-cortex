@@ -1,7 +1,9 @@
-pub struct Accelerator {
-    context: cl::cl_context
+use std::rc::Rc;
+
+pub struct Accelerator<'a> {
+    context: Rc<dyn Context + 'a>
 }
 
-impl Accelerator {
+pub(super) trait Context {
     
 }
