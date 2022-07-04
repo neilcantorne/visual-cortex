@@ -54,11 +54,24 @@ impl<'a> Device<'a> {
 
 }
 
+impl<'a> std::fmt::Debug for Device<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let display = match self.internal.get_api() {
+            super::ComputingApi::NvidiaCuda => format!("Nvidia CUDA: {}", self.internal.get_name()),
+            super::ComputingApi::OpenCL => format!("OpenCL: {}", self.internal.get_name())
+        };
+
+        f.debug_struct("Device")
+            .field("hardware", &display).finish()
+    }
+}
+
 pub(in crate::neu) trait DeviceInternal {
     fn get_name(&self) -> String;
     fn get_vendor(&self) -> String;
     fn get_type(&self) -> super::DeviceType;
     fn get_global_memory(&self) -> usize;
     fn get_clock_rate(&self) -> f32;
+    fn get_api(&self) -> super::ComputingApi;
     fn create_context<'a>(&self) -> Rc<dyn crate::neu::accelerator::Context + 'a>;
 }
