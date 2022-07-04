@@ -6,4 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cl = { package = "opencl-sys", version =  "0.2.1" }
+cl = { package = "opencl-sys", version =  "0.2.1", features = ["cl_khr_il_program"]}
+cuda = { package = "cuda-driver-sys", version = "0.3.0" }
