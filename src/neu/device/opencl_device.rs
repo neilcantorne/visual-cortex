@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use crate::utils::StackBuffer;
 
 
@@ -37,5 +39,21 @@ impl super::device::DeviceInternal for OpenCLDevice {
         }
 
         buffer.get_string(length)
+    }
+
+    fn get_global_memory(&self) -> usize {
+        let mut length = 0usize;
+        let mut global_memory : cl::cl_ulong = 0;
+        unsafe {
+
+            cl::clGetDeviceInfo(
+                self.id, 
+                cl::CL_DEVICE_GLOBAL_MEM_SIZE, 
+                std::mem::size_of::<cl::cl_ulong>(), 
+                (&mut global_memory as *mut cl::cl_ulong) as *mut std::ffi::c_void, 
+                &mut length);
+        }
+
+        global_memory as usize
     }
 }
