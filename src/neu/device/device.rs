@@ -1,6 +1,8 @@
-#[derive(Copy, Clone)]
+use std::rc::Rc;
+
+#[derive(Clone)]
 pub struct Device<'a> {
-    internal: Box<dyn DeviceInternal + 'a>
+    internal: Rc<dyn DeviceInternal + 'a>
 }
 
 impl<'a> Device<'a> {
