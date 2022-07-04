@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use crate::utils::StackBuffer;
 
 
@@ -84,6 +85,22 @@ impl super::device::DeviceInternal for OpenCLDevice {
         }
 
         clock_rate as f32
+    }
+
+    fn create_context<'a>(&self) -> Rc<dyn crate::neu::accelerator::Context + 'a> {
+        let handle = unsafe {
+            cl::clCreateContext(
+                std::ptr::null(),
+                1, 
+                [self.id].as_ptr(), 
+                None, 
+                std::ptr::null_mut(), 
+                std::ptr::null_mut())
+        };
+
+        Rc::new(crate::neu::accelerator::OpenCLContext {
+            handle
+        })
     }
 
 }
