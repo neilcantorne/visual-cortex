@@ -56,4 +56,24 @@ impl super::device::DeviceInternal for OpenCLDevice {
 
         global_memory as usize
     }
+
+    fn get_type(&self) -> super::DeviceType {
+        let mut length = 0usize;
+        let mut device_type : cl::cl_bitfield = 0;
+        unsafe {
+            cl::clGetDeviceInfo(
+                self.id, 
+                cl::CL_DEVICE_TYPE, 
+                std::mem::size_of::<cl::cl_bitfield>(), 
+                (&mut device_type as *mut cl::cl_bitfield) as *mut std::ffi::c_void, 
+                &mut length);
+        }
+
+        super::DeviceType::from_opencl_flag(device_type)
+    }
+
+    fn get_clock_rate(&self) -> f32 {
+        todo!()
+    }
+
 }
