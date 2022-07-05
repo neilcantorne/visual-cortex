@@ -13,6 +13,12 @@ impl<'a> Accelerator<'a> {
     }
 }
 
+impl<'a> Drop for Accelerator<'a> {
+    fn drop(&mut self) {
+        self.context.free();
+    }
+}
+
 pub(crate) trait Context {
-    
+    fn free(&self);
 }
