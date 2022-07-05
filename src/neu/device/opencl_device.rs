@@ -104,7 +104,7 @@ impl super::device::DeviceInternal for OpenCLDevice {
     }
 
     fn get_api(&self) -> super::ComputingApi {
-        super::ComputingApi::NvidiaCuda
+        super::ComputingApi::OpenCL
     }
 
 }
