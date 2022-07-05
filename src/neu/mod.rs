@@ -2,7 +2,7 @@ mod tensor;
 mod tensor_value;
 mod device;
 mod accelerator;
-mod error_flag;
+mod error;
 
 pub use tensor::Tensor;
 pub type Tensor1d<T> = Tensor<1, T>;
@@ -18,4 +18,5 @@ pub type Vec4f = (f32, f32, f32, f32);
 pub use device::Device;
 pub use accelerator::Accelerator;
 
-use error_flag::ErrorFlag;
+pub use error::Error;
+use error::ErrorFlag;
