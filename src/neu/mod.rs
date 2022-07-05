@@ -20,3 +20,4 @@ pub use accelerator::Accelerator;
 
 pub use error::Error;
 use error::ErrorFlag;
+pub type Result<T> = std::result::Result<T, self::Error>;
