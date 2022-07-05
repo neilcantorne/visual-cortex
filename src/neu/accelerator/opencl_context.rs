@@ -4,5 +4,7 @@ pub(crate) struct OpenCLContext {
 }
 
 impl super::Context for OpenCLContext {
-
+    fn free(&self) {
+        unsafe {  cl::clReleaseContext(self.handle) };
+    }
 }
