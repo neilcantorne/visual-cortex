@@ -8,10 +8,10 @@ pub struct Accelerator<'a> {
 }
 
 impl<'a> Accelerator<'a> {
-    pub fn new(device: &super::Device) -> Self {
-        Self {
-            context: device.internal.create_context()
-        }
+    pub fn new(device: &super::Device) -> super::Result<Self> {
+        Ok(Self {
+            context: device.internal.create_context()?
+        })
     }
 }
 
