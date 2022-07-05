@@ -73,5 +73,6 @@ pub(in crate::neu) trait DeviceInternal {
     fn get_global_memory(&self) -> usize;
     fn get_clock_rate(&self) -> f32;
     fn get_api(&self) -> super::ComputingApi;
-    fn create_context<'a>(&self) -> Rc<dyn crate::neu::accelerator::Context + 'a>;
+    fn create_context<'a>(&self) ->
+        crate::neu::Result<Rc<dyn crate::neu::accelerator::Context + 'a>>;
 }
