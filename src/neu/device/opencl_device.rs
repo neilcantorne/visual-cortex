@@ -1,6 +1,6 @@
 use std::rc::Rc;
 use crate::utils::StackBuffer;
-
+use crate::neu;
 
 #[derive(Copy, Clone)]
 pub(crate) struct OpenCLDevice {
@@ -87,20 +87,28 @@ impl super::device::DeviceInternal for OpenCLDevice {
         clock_rate as f32
     }
 
-    fn create_context<'a>(&self) -> Rc<dyn crate::neu::accelerator::Context + 'a> {
+    fn create_context<'a>(&self) ->
+        neu::Result<Rc<dyn neu::accelerator::Context + 'a>> {
+        let mut errcode = 0i32;
+
         let handle = unsafe {
+
             cl::clCreateContext(
                 std::ptr::null(),
                 1, 
                 [self.id].as_ptr(), 
                 None, 
                 std::ptr::null_mut(), 
-                std::ptr::null_mut())
+                &mut errcode)
         };
 
-        Rc::new(crate::neu::accelerator::OpenCLContext {
-            handle
-        })
+        if errcode == cl::CL_SUCCESS {
+            return Ok(Rc::new(neu::accelerator::OpenCLContext {
+                handle
+            }))
+        }
+
+        Err(neu::Error::new(neu::ErrorFlag::OpenCL(errcode)))
     }
 
     fn get_api(&self) -> super::ComputingApi {
