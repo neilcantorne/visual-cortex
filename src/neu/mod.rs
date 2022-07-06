@@ -3,6 +3,7 @@ mod tensor_value;
 mod device;
 mod accelerator;
 mod error;
+mod kernel;
 
 pub use tensor::Tensor;
 pub type Tensor1d<T> = Tensor<1, T>;
@@ -21,3 +22,5 @@ pub use accelerator::Accelerator;
 pub use error::Error;
 use error::ErrorFlag;
 pub type Result<T> = std::result::Result<T, self::Error>;
+
+pub use kernel::KernelBuilder;
